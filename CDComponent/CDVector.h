@@ -19,6 +19,26 @@ struct CD_Vector
 		y = right.y;
 	}
 
+	CD_Vector operator+(CD_Vector right)
+	{
+		return CD_Vector(x + right.x, y + right.y);
+	}
+
+	CD_Vector operator-(CD_Vector right)
+	{
+		return CD_Vector(x - right.x, y - right.y);
+	}
+
+	float operator*(CD_Vector right)
+	{
+		return ((x * right.x) + (y * right.y));
+	}
+
+	CD_Vector operator*(float right)
+	{
+		return CD_Vector(x * right, y * right);
+	}
+
 	float x;
 	float y;
 };

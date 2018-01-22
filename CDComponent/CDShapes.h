@@ -164,7 +164,7 @@ public:
 	/// Choose an origin point you are comfortable with.
 	/// Note that the vertices should be given not as absolute values, but offsets in relation to this anchor point. 
 	/// This library assumes that the vertices will be arranged in a clockwise fashion.
-	/// Arranging them anti-clockwise or out of order entirely will result in errors.
+	/// Arranging them anti-clockwise or out of order entirely will result in errors, as will constructing a concave shape.
 	/// </summary>
 	/// <param name="pos">Position of the "anchor point" of the polygon. This is not a vertex.</param>
 	/// <param name="verts">Vector of vertex positions.</param>

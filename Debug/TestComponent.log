@@ -1,3 +1,6 @@
 ﻿  Test.cpp
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\cdcomponent\cdcomponent.h(124): warning C4018: '<': signed/unsigned mismatch
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\cdcomponent\cdcomponent.h(140): warning C4018: '<': signed/unsigned mismatch
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\cdcomponent\cdcomponent.h(157): warning C4018: '<': signed/unsigned mismatch
   TestComponent.vcxproj -> C:\Users\gameuser\Documents\RWM\CollisionDetection\CDComponent\Debug\TestComponent.exe
   TestComponent.vcxproj -> C:\Users\gameuser\Documents\RWM\CollisionDetection\CDComponent\Debug\TestComponent.pdb (Partial PDB)

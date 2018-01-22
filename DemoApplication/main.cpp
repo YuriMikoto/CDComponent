@@ -20,6 +20,11 @@ CD_Circle c1, c2, c3;
 //Polygons p1 and p2 are used in polygon testing. Naturally.
 CD_Polygon p1, p2;
 
+CD_CollisionManager cm;
+
+/// <summary>
+/// Starts up scene 1, Rect-Rect collision. 
+/// </summary>
 void initializeScene1()
 {
 	appstate = 1;
@@ -27,6 +32,9 @@ void initializeScene1()
 	r2 = CD_Rect(CD_Vector(6.0f, 0.0f));
 }
 
+/// <summary>
+/// Starts up scene 2, Circle-Circle collision.
+/// </summary>
 void initializeScene2()
 {
 	appstate = 2;
@@ -34,25 +42,30 @@ void initializeScene2()
 	c2 = CD_Circle(CD_Vector(6.0f, 0.0f));
 }
 
+/// <summary>
+/// Starts up scene 3, Rect-Circle collision.
+/// </summary>
 void initializeScene3()
 {
 	appstate = 3;
 	r3 = CD_Rect(CD_Vector(0.0f, 0.0f));
 	c3 = CD_Circle(CD_Vector(6.0f, 0.0f));
 }
-
+/// <summary>
+/// Starts up scene 4, Polygon-Polygon collision.
+/// </summary>
 void initializeScene4()
 {
 	appstate = 4;
-	//Creates a polygon.
+	//Creates a polygon. This makes a triangle that's as close to equilateral as I cared to make it. Not that it matters much.
 	std::vector<CD_Vector> p1Verts = {
-	CD_Vector(-2.5f, -2.5f),
-	CD_Vector(2.5f, -2.5f),
-	CD_Vector(2.5f, 2.5f),
-	CD_Vector(-2.5f, 2.5f)
+	CD_Vector(0.0f, 0.0f),
+	CD_Vector(2.5f, 4.33f),
+	CD_Vector(-2.5f, 4.33f)
 	};
 	p1 = CD_Polygon(CD_Vector(2.5f, 2.5f), p1Verts);
 
+	//Here's another way of writing it that does the same thing, but a rectangle this time.
 	p2 = CD_Polygon(CD_Vector(8.5f, 2.5f), std::vector<CD_Vector> {
 		CD_Vector(-2.5f, -2.5f),
 		CD_Vector(2.5f, -2.5f),
@@ -61,6 +74,90 @@ void initializeScene4()
 	});
 }
 
+/// <summary>
+/// Prints the positions and details of game objects in the console. Refreshes each time this data changes to make it more easily readable.
+/// </summary>
+void showConsole()
+{
+	//Display console.
+	if (appstate == MAIN_MENU)
+	{
+		system("CLS");
+		cout << "Please select the Demo App window and press one of the following number keys to open a feature." << endl
+			<< "1: Rectangles using AABB" << endl
+			<< "2: Circles using radii" << endl
+			<< "3: Rectangle and circle using SAT" << endl
+			<< "4: Complex polygons using SAT" << endl << endl
+			<< "You may return to this menu at any time during a feature test by pressing the ESC key." << endl
+			<< "Alternatively, you may press ESC now to close this program entirely." << endl;
+	}
+	else if (appstate == RECTS_AABB)
+	{
+		system("CLS");
+		cout << "R1 Position: (" << r1.GetPosition().x << ", " << r1.GetPosition().y << ");" << endl
+			<< "R1 Dimensions: " << r1.GetWidth() << " units width, " << r1.GetHeight() << " units height." << endl << endl
+			<< "R2 Position: (" << r2.GetPosition().x << ", " << r2.GetPosition().y << ");" << endl
+			<< "R2 Dimensions: " << r2.GetWidth() << " units width, " << r2.GetHeight() << " units height." << endl << endl;
+		if (cm.CheckCollision(r1, r2))
+		{
+			cout << "Collision detected." << endl;
+		}
+	}
+	else if (appstate == AppState::CIRCLES_RADII)
+	{
+		system("CLS");
+		cout << "C1 Position: (" << c1.GetPosition().x << ", " << c1.GetPosition().y << ");" << endl
+			<< "C1 Radius: " << c1.GetRadius() << " units." << endl << endl
+			<< "C2 Position: (" << c2.GetPosition().x << ", " << c2.GetPosition().y << ");" << endl
+			<< "C2 Radius: " << c2.GetRadius() << " units." << endl << endl;
+		if (cm.CheckCollision(c1, c2))
+		{
+			cout << "Collision detected." << endl;
+		}
+	}
+	else if (appstate == AppState::RECT_CIRCLE_SAT)
+	{
+		system("CLS");
+		cout << "R3 Position: (" << r3.GetPosition().x << ", " << r3.GetPosition().y << ");" << endl
+			<< "R3 Dimensions: " << r3.GetWidth() << " units width, " << r3.GetHeight() << " units height." << endl << endl
+			<< "C3 Position: (" << c3.GetPosition().x << ", " << c3.GetPosition().y << ");" << endl
+			<< "C3 Radius: " << c3.GetRadius() << " units." << endl << endl;
+		if (cm.CheckCollision(r3, c3))
+		{
+			cout << "Collision detected." << endl;
+		}
+	}
+	else if (appstate == AppState::POLYGONS_SAT)
+	{
+		system("CLS");
+
+		cout << "P1 Position: (" << p1.GetPosition().x << ", " << p1.GetPosition().y << ");" << endl
+			<< "P1 Vertices: {" << endl;
+		for (int i = 0; i < p1.GetVertices().size(); i++)
+		{
+			cout << "(" << p1.GetVertices()[i].x + p1.GetPosition().x << ", " << p1.GetVertices()[i].y + p1.GetPosition().y << ");" << endl;
+		}
+
+		cout << endl << "P2 Position: (" << p2.GetPosition().x << ", " << p2.GetPosition().y << ");" << endl
+			<< "P2 Vertices: {" << endl;
+		for (int i = 0; i < p2.GetVertices().size(); i++)
+		{
+			cout << "(" << p2.GetVertices()[i].x + p2.GetPosition().x << ", " << p2.GetVertices()[i].y + p2.GetPosition().y << ");" << endl;
+		}
+
+		if (cm.CheckCollision(p1, p2))
+		{
+			cout << "Collision detected." << endl;
+		}
+	}
+}
+
+/// <summary>
+/// Entry point. Also handles player input.
+/// </summary>
+/// <param name="argc"></param>
+/// <param name="argv"></param>
+/// <returns></returns>
 int main(int argc, char* argv[])
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
@@ -77,9 +174,10 @@ int main(int argc, char* argv[])
 	//Handles keyboard events.
 	SDL_Event e;
 
-	CD_CollisionManager cm;
 	//cm.AddShape(r1);
 	//cm.AddShape(r2);
+
+	showConsole();
 
 	while (!quit)
 	{
@@ -188,64 +286,7 @@ int main(int argc, char* argv[])
 						break;
 					}
 				}
-			}
-		}
-
-		//Display console.
-		if (appstate == MAIN_MENU)
-		{
-			system("CLS");
-			cout << "Please select the Demo App window and press one of the following number keys to open a feature." << endl
-				<< "1: Rectangles using AABB" << endl
-				<< "2: Circles using radii" << endl
-				<< "3: Rectangle and circle using SAT" << endl
-				<< "4: Complex polygons using SAT" << endl << endl
-				<< "You may return to this menu at any time during a feature test by pressing the ESC key." << endl
-				<< "Alternatively, you may press ESC now to close this program entirely." << endl;
-		}
-		else if (appstate == RECTS_AABB)
-		{
-			system("CLS");
-			cout << "R1 Position: (" << r1.GetPosition().x << ", " << r1.GetPosition().y << ");" << endl
-				<< "R1 Dimensions: " << r1.GetWidth() << " units width, " << r1.GetHeight() << " units height." << endl << endl
-				<< "R2 Position: (" << r2.GetPosition().x << ", " << r2.GetPosition().y << ");" << endl
-				<< "R2 Dimensions: " << r2.GetWidth() << " units width, " << r2.GetHeight() << " units height." << endl << endl;
-			if (cm.CheckCollision(r1, r2))
-			{
-				cout << "Collision detected." << endl;
-			}
-		}
-		else if (appstate == AppState::CIRCLES_RADII)
-		{
-			system("CLS");
-			cout << "C1 Position: (" << c1.GetPosition().x << ", " << c1.GetPosition().y << ");" << endl
-				<< "C1 Radius: " << c1.GetRadius() << " units." << endl << endl
-				<< "C2 Position: (" << c2.GetPosition().x << ", " << c2.GetPosition().y << ");" << endl
-				<< "C2 Radius: " << c2.GetRadius() << " units." << endl << endl;
-			if (cm.CheckCollision(c1, c2))
-			{
-				cout << "Collision detected." << endl;
-			}
-		}
-		else if (appstate == AppState::RECT_CIRCLE_SAT)
-		{
-			system("CLS");
-			cout << "R3 Position: (" << r3.GetPosition().x << ", " << r3.GetPosition().y << ");" << endl
-				<< "R3 Dimensions: " << r3.GetWidth() << " units width, " << r3.GetHeight() << " units height." << endl << endl
-				<< "C3 Position: (" << c3.GetPosition().x << ", " << c3.GetPosition().y << ");" << endl
-				<< "C3 Radius: " << c3.GetRadius() << " units." << endl << endl;
-			if (cm.CheckCollision(r3, c3))
-			{
-				cout << "Collision detected." << endl;
-			}
-		}
-		else if (appstate == AppState::POLYGONS_SAT)
-		{
-			system("CLS");
-
-			if (cm.CheckCollision(p1, p2))
-			{
-				cout << "Collision detected." << endl;
+				showConsole();
 			}
 		}
 	}
