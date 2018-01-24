@@ -86,6 +86,7 @@ public:
 	/// Check for collision between two different shapes.
 	/// Advanced collision detection using the Separating Axis Theorem.
 	/// Parallel function to CheckCollision(CD_Circle a, CD_Rect b); same effect with different argument permutation.
+	/// This is kind of disgusting to look at. It would probably be a good idea to separate this into multiple functions. But that's a problem for another day.
 	/// </summary>
 	/// <param name="a">Rectangle shape.</param>
 	/// <param name="b">Circle shape.</param>
@@ -95,21 +96,11 @@ public:
 		std::vector<CD_Vector> aVerts;
 		std::vector<CD_Vector> axes;
 
-		//Convert rect to polygon, sort of.
+		//Convert rect to polygon, sort of. This seems to just make things easier.
 		aVerts.push_back(CD_Vector(0, 0));
 		aVerts.push_back(CD_Vector(a.GetWidth(), 0));
 		aVerts.push_back(CD_Vector(a.GetWidth(), a.GetHeight()));
 		aVerts.push_back(CD_Vector(0, a.GetHeight()));
-
-		CD_Polygon aPoly(a.GetPosition(), aVerts);
-		//axes = GetAxes(aPoly, axes);
-
-		/*cout << "P1 Position: (" << aPoly.GetPosition().x << ", " << aPoly.GetPosition().y << ");" << endl
-			<< "P1 Vertices: {" << endl;
-		for (int i = 0; i < aPoly.GetVertices().size(); i++)
-		{
-			cout << "(" << aPoly.GetVertices()[i].x + aPoly.GetPosition().x << ", " << aPoly.GetVertices()[i].y + aPoly.GetPosition().y << ");" << endl;
-		}*/
 
 		//Because a rect's opposite sides are parallel, only need to check two axes of four edges.
 		axes.push_back(CD_Vector(1, 0));
@@ -177,8 +168,6 @@ public:
 
 		for (int l = 0; l < aVerts.size(); l++)
 		{
-			//I worry that this section is prone to errors. Will test this tomorrow.
-			//This seems to be backwards. It's not marking the right vertex as the closest one at all.
 			float tempdist = sqrt(((b.GetPosition().x - (a.GetPosition().x + aVerts[l].x)) * (b.GetPosition().x - (a.GetPosition().x + aVerts[l].x)))
 				+ ((b.GetPosition().y - (a.GetPosition().y + aVerts[l].y)) * (b.GetPosition().y - (a.GetPosition().y + aVerts[l].y))));
 
@@ -188,16 +177,72 @@ public:
 				nearest = l; //Probably not necessary, but keeping a note of this in case.
 			}
 		}
-		cout << nearest << endl;
 
+		//This will be the last axis we check. Let's also get the length of this vector so we can normalize it in a second.
+		CD_Vector finalaxis = b.GetPosition() - (a.GetPosition() + aVerts[nearest]);
+		float finalaxislength = sqrt((finalaxis.x * finalaxis.x) + (finalaxis.y * finalaxis.y));
 
-
-		if (distance <= b.GetRadius())
-		{//Check the distance. If they're close enough, we've checked every axis by now, so there's definitely a collision.
+		//If there's no distance between the centre of the circle and the nearest point, it's definitely colliding.
+		//Prevents division by zero error and also interrupts the check early if an extremely blatant collision is occurring.
+		if (finalaxislength == 0)
+		{
 			return true;
 		}
-		//Otherwise, they're far enough away that there's a gap here too. No collision detected.
-		return false;
+
+		//Next, normalize the axis vector.
+		finalaxis = CD_Vector(finalaxis.x / finalaxislength, finalaxis.y / finalaxislength);
+
+		//Here, we're going to once again project points onto the axis and compare minimum and maximum points.
+		float min1 = std::numeric_limits<float>::infinity();
+		float min2 = std::numeric_limits<float>::infinity();
+		float max1 = -std::numeric_limits<float>::infinity();
+		float max2 = -std::numeric_limits<float>::infinity();
+
+		//Project A's vertices onto the axis and find the object's range.
+		for (int j = 0; j < aVerts.size(); j++)
+		{
+			float projection = finalaxis.x * (a.GetPosition().x + aVerts[j].x) + finalaxis.y * (a.GetPosition().y + aVerts[j].y);
+
+			if (projection < min1)
+			{
+				min1 = projection;
+			}
+			if (projection > max1)
+			{
+				max1 = projection;
+			}
+		}
+
+		//Project B's minimum and maximum points onto the axis and find the object's range.
+		float circlePosition = finalaxis.x * b.GetPosition().x + finalaxis.y * b.GetPosition().y;
+
+		float projection = circlePosition - b.GetRadius();
+		if (projection < min2)
+		{
+			min2 = projection;
+		}
+		if (projection > max2)
+		{
+			max2 = projection;
+		}
+
+		projection = circlePosition + b.GetRadius();
+		if (projection < min2)
+		{
+			min2 = projection;
+		}
+		if (projection > max2)
+		{
+			max2 = projection;
+		}
+
+		//Check the projections to see if there's a gap between them.
+		if (max1 < min2 || max2 < min1)
+		{
+			//Gap visible from this angle. Definitely not colliding. Return false and cancel the rest of the check.
+			return false;
+		}
+		return true;
 	}
 
 	/// <summary>
@@ -332,11 +377,6 @@ public:
 	{
 		return false;
 	}
-
-	//Per-Pixel Collision - Will I even get the chance to do this?
-	//bool PerPixelCollision();
-
-	//Collision Response?
 
 private:
 

@@ -277,29 +277,16 @@ void render(SDL_Renderer *renderer)
 }
 
 /// <summary>
-/// Entry point. Also handles player input.
+/// Medium between the main() function and all others. Handles user input and also calls to rendering the game screen and console.
 /// </summary>
-/// <param name="argc"></param>
-/// <param name="argv"></param>
-/// <returns></returns>
-int main(int argc, char* argv[])
+/// <param name="renderer">Renderer to draw on.</param>
+void update(SDL_Renderer* renderer)
 {
-	SDL_Init(SDL_INIT_EVERYTHING);
-
-	SDL_Window *window = SDL_CreateWindow("Demo App", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 600, 400, SDL_WINDOW_SHOWN);
-	SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
-	//SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-	//SDL_RenderClear(renderer);
-	//SDL_RenderPresent(renderer);
-
 	//Becomes true when any quit input is received; allows the application to quit while true.
 	bool quit = false;
 
 	//Handles keyboard events.
 	SDL_Event e;
-
-	//cm.AddShape(r1);
-	//cm.AddShape(r2);
 
 	showConsole();
 
@@ -415,6 +402,22 @@ int main(int argc, char* argv[])
 			}
 		}
 	}
+}
+
+/// <summary>
+/// Entry point. Also handles player input.
+/// </summary>
+/// <param name="argc"></param>
+/// <param name="argv"></param>
+/// <returns></returns>
+int main(int argc, char* argv[])
+{
+	SDL_Init(SDL_INIT_EVERYTHING);
+
+	SDL_Window *window = SDL_CreateWindow("Demo App", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 600, 400, SDL_WINDOW_SHOWN);
+	SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
+
+	update(renderer);
 
 	SDL_Quit();
 	return 0;
