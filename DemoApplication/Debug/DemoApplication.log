@@ -1,9 +1,32 @@
 ﻿  main.cpp
-c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\cdcomponent\cdcomponent.h(130): warning C4018: '<': signed/unsigned mismatch
-c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\cdcomponent\cdcomponent.h(138): warning C4018: '<': signed/unsigned mismatch
-c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\cdcomponent\cdcomponent.h(153): warning C4018: '<': signed/unsigned mismatch
-c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\cdcomponent\cdcomponent.h(241): warning C4018: '<': signed/unsigned mismatch
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\cdcomponent\cdcomponent.h(101): warning C4018: '<': signed/unsigned mismatch
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\cdcomponent\cdcomponent.h(179): warning C4018: '<': signed/unsigned mismatch
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\cdcomponent\cdcomponent.h(195): warning C4018: '<': signed/unsigned mismatch
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\cdcomponent\cdcomponent.h(254): warning C4018: '<': signed/unsigned mismatch
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\cdcomponent\cdcomponent.h(262): warning C4018: '<': signed/unsigned mismatch
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\cdcomponent\cdcomponent.h(277): warning C4018: '<': signed/unsigned mismatch
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\cdcomponent\cdcomponent.h(365): warning C4018: '<': signed/unsigned mismatch
 c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\demoapplication\main.cpp(136): warning C4018: '<': signed/unsigned mismatch
 c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\demoapplication\main.cpp(143): warning C4018: '<': signed/unsigned mismatch
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\demoapplication\main.cpp(159): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\demoapplication\main.cpp(160): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\demoapplication\main.cpp(169): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\demoapplication\main.cpp(170): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\demoapplication\main.cpp(179): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\demoapplication\main.cpp(180): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\demoapplication\main.cpp(227): warning C4838: conversion from 'float' to 'int' requires a narrowing conversion
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\demoapplication\main.cpp(227): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\demoapplication\main.cpp(236): warning C4838: conversion from 'float' to 'int' requires a narrowing conversion
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\demoapplication\main.cpp(236): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\demoapplication\main.cpp(241): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\demoapplication\main.cpp(242): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\demoapplication\main.cpp(252): warning C4838: conversion from 'float' to 'int' requires a narrowing conversion
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\demoapplication\main.cpp(252): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\demoapplication\main.cpp(255): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\demoapplication\main.cpp(264): warning C4838: conversion from 'float' to 'int' requires a narrowing conversion
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\demoapplication\main.cpp(264): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\demoapplication\main.cpp(272): warning C4838: conversion from 'float' to 'int' requires a narrowing conversion
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\demoapplication\main.cpp(272): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\gameuser\documents\rwm\collisiondetection\cdcomponent\cdcomponent\cdcomponent.h(143): warning C4715: 'CD_CollisionManager::CheckAxis': not all control paths return a value
   DemoApplication.vcxproj -> C:\Users\gameuser\Documents\RWM\CollisionDetection\CDComponent\Debug\DemoApplication.exe
   DemoApplication.vcxproj -> C:\Users\gameuser\Documents\RWM\CollisionDetection\CDComponent\Debug\DemoApplication.pdb (Partial PDB)

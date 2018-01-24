@@ -38,8 +38,8 @@ void initializeScene1()
 void initializeScene2()
 {
 	appstate = 2;
-	c1 = CD_Circle(CD_Vector(0.0f, 0.0f));
-	c2 = CD_Circle(CD_Vector(6.0f, 0.0f));
+	c1 = CD_Circle(CD_Vector(5.0f, 5.0f));
+	c2 = CD_Circle(CD_Vector(11.0f, 5.0f));
 }
 
 /// <summary>
@@ -49,7 +49,7 @@ void initializeScene3()
 {
 	appstate = 3;
 	r3 = CD_Rect(CD_Vector(0.0f, 0.0f));
-	c3 = CD_Circle(CD_Vector(6.0f, 0.0f));
+	c3 = CD_Circle(CD_Vector(11.0f, 5.0f));
 }
 /// <summary>
 /// Starts up scene 4, Polygon-Polygon collision.
@@ -152,6 +152,130 @@ void showConsole()
 	}
 }
 
+//Found this here: https://stackoverflow.com/questions/38334081/howto-draw-circles-arcs-and-vector-graphics-in-sdl
+//draw one quadrant arc, and mirror the other 4 quadrants
+void sdl_ellipse(SDL_Renderer* r, int x0, int y0, int radiusX, int radiusY)
+{
+	float pi = 3.14159265358979323846264338327950288419716939937510;
+	float pih = pi / 2.0; //half of pi
+
+						  //drew  28 lines with   4x4  circle with precision of 150 0ms
+						  //drew 132 lines with  25x14 circle with precision of 150 0ms
+						  //drew 152 lines with 100x50 circle with precision of 150 3ms
+	const int prec = 27; // precision value; value of 1 will draw a diamond, 27 makes pretty smooth circles.
+	float theta = 0;     // angle that will be increased each loop
+
+						 //starting point
+	int x = (float)radiusX * cos(theta);//start point
+	int y = (float)radiusY * sin(theta);//start point
+	int x1 = x;
+	int y1 = y;
+
+	//repeat until theta >= 90;
+	float step = pih / (float)prec; // amount to add to theta each time (degrees)
+	for (theta = step; theta <= pih; theta += step)//step through only a 90 arc (1 quadrant)
+	{
+		//get new point location
+		x1 = (float)radiusX * cosf(theta) + 0.5; //new point (+.5 is a quick rounding method)
+		y1 = (float)radiusY * sinf(theta) + 0.5; //new point (+.5 is a quick rounding method)
+
+												 //draw line from previous point to new point, ONLY if point incremented
+		if ((x != x1) || (y != y1))//only draw if coordinate changed
+		{
+			SDL_RenderDrawLine(r, x0 + x, y0 - y, x0 + x1, y0 - y1);//quadrant TR
+			SDL_RenderDrawLine(r, x0 - x, y0 - y, x0 - x1, y0 - y1);//quadrant TL
+			SDL_RenderDrawLine(r, x0 - x, y0 + y, x0 - x1, y0 + y1);//quadrant BL
+			SDL_RenderDrawLine(r, x0 + x, y0 + y, x0 + x1, y0 + y1);//quadrant BR
+		}
+		//save previous points
+		x = x1;//save new previous point
+		y = y1;//save new previous point
+	}
+	//arc did not finish because of rounding, so finish the arc
+	if (x != 0)
+	{
+		x = 0;
+		SDL_RenderDrawLine(r, x0 + x, y0 - y, x0 + x1, y0 - y1);//quadrant TR
+		SDL_RenderDrawLine(r, x0 - x, y0 - y, x0 - x1, y0 - y1);//quadrant TL
+		SDL_RenderDrawLine(r, x0 - x, y0 + y, x0 - x1, y0 + y1);//quadrant BL
+		SDL_RenderDrawLine(r, x0 + x, y0 + y, x0 + x1, y0 + y1);//quadrant BR
+	}
+}
+
+/// <summary>
+/// Draw the current scene's shapes on screen.
+/// </summary>
+/// <param name="renderer">Renderer to draw on.</param>
+void render(SDL_Renderer *renderer)
+{
+	//Clear the screen.
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+	SDL_RenderClear(renderer);
+
+	//Draw shapes in white.
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+	//Draw the shapes from the current scene.
+	if (appstate == 1)
+	{
+		SDL_Point points1[5] = {
+			{ (r1.GetPosition().x) * 10, (r1.GetPosition().y) * 10 },
+			{ (r1.GetPosition().x + r1.GetWidth()) * 10, (r1.GetPosition().y) * 10 },
+			{ (r1.GetPosition().x + r1.GetWidth()) * 10, (r1.GetPosition().y + r1.GetHeight()) * 10 },
+			{ (r1.GetPosition().x) * 10, (r1.GetPosition().y + r1.GetHeight()) * 10 },
+			{ (r1.GetPosition().x) * 10, (r1.GetPosition().y) * 10 },
+		};
+		SDL_RenderDrawLines(renderer, points1, 5);
+
+		SDL_Point points2[5] = {
+			{ (r2.GetPosition().x) * 10, (r2.GetPosition().y) * 10 },
+			{ (r2.GetPosition().x + r2.GetWidth()) * 10, (r2.GetPosition().y) * 10 },
+			{ (r2.GetPosition().x + r2.GetWidth()) * 10, (r2.GetPosition().y + r2.GetHeight()) * 10 },
+			{ (r2.GetPosition().x) * 10, (r2.GetPosition().y + r2.GetHeight()) * 10 },
+			{ (r2.GetPosition().x) * 10, (r2.GetPosition().y) * 10 },
+		};
+		SDL_RenderDrawLines(renderer, points2, 5);
+	}
+	else if (appstate == 2)
+	{
+		sdl_ellipse(renderer, c1.GetPosition().x * 10, c1.GetPosition().y * 10, c1.GetRadius() * 10, c1.GetRadius() * 10);
+		sdl_ellipse(renderer, c2.GetPosition().x * 10, c2.GetPosition().y * 10, c2.GetRadius() * 10, c2.GetRadius() * 10);
+	}
+	else if (appstate == 3)
+	{
+		SDL_Point points[5] = {
+			{ (r3.GetPosition().x) * 10, (r3.GetPosition().y) * 10 },
+			{ (r3.GetPosition().x + r3.GetWidth()) * 10, (r3.GetPosition().y) * 10 },
+			{ (r3.GetPosition().x + r3.GetWidth()) * 10, (r3.GetPosition().y + r3.GetHeight()) * 10 },
+			{ (r3.GetPosition().x) * 10, (r3.GetPosition().y + r3.GetHeight()) * 10 },
+			{ (r3.GetPosition().x) * 10, (r3.GetPosition().y) * 10 },
+		};
+		SDL_RenderDrawLines(renderer, points, 5);
+
+		sdl_ellipse(renderer, c3.GetPosition().x * 10, c3.GetPosition().y * 10, c3.GetRadius() * 10, c3.GetRadius() * 10);
+	}
+	else if (appstate == 4)
+	{
+		SDL_Point points1[4] = {
+			{ (p1.GetPosition().x + p1.GetVertices()[0].x) * 10, (p1.GetPosition().y + p1.GetVertices()[0].y) * 10 },
+			{ (p1.GetPosition().x + p1.GetVertices()[1].x) * 10, (p1.GetPosition().y + p1.GetVertices()[1].y) * 10 },
+			{ (p1.GetPosition().x + p1.GetVertices()[2].x) * 10, (p1.GetPosition().y + p1.GetVertices()[2].y) * 10 },
+			{ (p1.GetPosition().x + p1.GetVertices()[0].x) * 10, (p1.GetPosition().y + p1.GetVertices()[0].y) * 10 }
+		};
+		SDL_RenderDrawLines(renderer, points1, 4);
+		SDL_Point points2[5] = {
+			{ (p2.GetPosition().x + p2.GetVertices()[0].x) * 10, (p2.GetPosition().y + p2.GetVertices()[0].y) * 10 },
+			{ (p2.GetPosition().x + p2.GetVertices()[1].x) * 10, (p2.GetPosition().y + p2.GetVertices()[1].y) * 10 },
+			{ (p2.GetPosition().x + p2.GetVertices()[2].x) * 10, (p2.GetPosition().y + p2.GetVertices()[2].y) * 10 },
+			{ (p2.GetPosition().x + p2.GetVertices()[3].x) * 10, (p2.GetPosition().y + p2.GetVertices()[3].y) * 10 },
+			{ (p2.GetPosition().x + p2.GetVertices()[0].x) * 10, (p2.GetPosition().y + p2.GetVertices()[0].y) * 10 }
+		};
+		SDL_RenderDrawLines(renderer, points2, 5);
+	}
+
+	SDL_RenderPresent(renderer);
+}
+
 /// <summary>
 /// Entry point. Also handles player input.
 /// </summary>
@@ -164,9 +288,9 @@ int main(int argc, char* argv[])
 
 	SDL_Window *window = SDL_CreateWindow("Demo App", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 600, 400, SDL_WINDOW_SHOWN);
 	SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-	SDL_RenderClear(renderer);
-	SDL_RenderPresent(renderer);
+	//SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+	//SDL_RenderClear(renderer);
+	//SDL_RenderPresent(renderer);
 
 	//Becomes true when any quit input is received; allows the application to quit while true.
 	bool quit = false;
@@ -287,6 +411,7 @@ int main(int argc, char* argv[])
 					}
 				}
 				showConsole();
+				render(renderer);
 			}
 		}
 	}

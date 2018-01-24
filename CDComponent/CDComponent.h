@@ -56,7 +56,7 @@ public:
 	{
 		float distance = sqrt(((a.GetPosition().x - b.GetPosition().x) * (a.GetPosition().x - b.GetPosition().x))
 			+ ((a.GetPosition().y - b.GetPosition().y) * (a.GetPosition().y - b.GetPosition().y)));
-		if (distance <= (a.GetRadius() + b.GetRadius()) / 2.0f)
+		if (distance <= (a.GetRadius() + b.GetRadius()))
 		{//If they're touching or intersecting, respond. Otherwise, do nothing. 
 			return true;
 		}
@@ -92,6 +92,111 @@ public:
 	/// <returns>True if a collision occurs, false otherwise.</returns>
 	bool CheckCollision(CD_Rect a, CD_Circle b)
 	{
+		std::vector<CD_Vector> aVerts;
+		std::vector<CD_Vector> axes;
+
+		//Convert rect to polygon, sort of.
+		aVerts.push_back(CD_Vector(0, 0));
+		aVerts.push_back(CD_Vector(a.GetWidth(), 0));
+		aVerts.push_back(CD_Vector(a.GetWidth(), a.GetHeight()));
+		aVerts.push_back(CD_Vector(0, a.GetHeight()));
+
+		CD_Polygon aPoly(a.GetPosition(), aVerts);
+		//axes = GetAxes(aPoly, axes);
+
+		/*cout << "P1 Position: (" << aPoly.GetPosition().x << ", " << aPoly.GetPosition().y << ");" << endl
+			<< "P1 Vertices: {" << endl;
+		for (int i = 0; i < aPoly.GetVertices().size(); i++)
+		{
+			cout << "(" << aPoly.GetVertices()[i].x + aPoly.GetPosition().x << ", " << aPoly.GetVertices()[i].y + aPoly.GetPosition().y << ");" << endl;
+		}*/
+
+		//Because a rect's opposite sides are parallel, only need to check two axes of four edges.
+		axes.push_back(CD_Vector(1, 0));
+		axes.push_back(CD_Vector(0, 1));
+
+		//Go through every axis and check every angle.
+		for (int i = 0; i < axes.size(); i++)
+		{
+			float min1 = std::numeric_limits<float>::infinity();
+			float min2 = std::numeric_limits<float>::infinity();
+			float max1 = -std::numeric_limits<float>::infinity();
+			float max2 = -std::numeric_limits<float>::infinity();
+
+			//Project A's vertices onto the axis and find the object's range.
+			for (int j = 0; j < aVerts.size(); j++)
+			{
+				float projection = axes[i].x * (a.GetPosition().x + aVerts[j].x) + axes[i].y * (a.GetPosition().y + aVerts[j].y);
+
+				if (projection < min1)
+				{
+					min1 = projection;
+				}
+				if (projection > max1)
+				{
+					max1 = projection;
+				}
+			}
+
+			//Project B's minimum and maximum points onto the axis and find the object's range.
+			float circlePosition = axes[i].x * b.GetPosition().x + axes[i].y * b.GetPosition().y;
+
+			float projection = circlePosition - b.GetRadius();
+			if (projection < min2)
+			{
+				min2 = projection;
+			}
+			if (projection > max2)
+			{
+				max2 = projection;
+			}
+
+			projection = circlePosition + b.GetRadius();
+			if (projection < min2)
+			{
+				min2 = projection;
+			}
+			if (projection > max2)
+			{
+				max2 = projection;
+			}
+			//Check the projections to see if there's a gap between them.
+			if (max1 < min2 || max2 < min1)
+			{
+				//Gap visible from this angle. Definitely not colliding. Return false and cancel the rest of the check.
+				return false;
+			}
+			//Here, we're done with this axis and it's time to check the next one. 
+		}
+		//If it hasn't found a gap by now, it's time to check the distance between the centre and the nearest vertex.
+		//Get the distance between the centre of the circle and each point on the rectangle. Find which one is closest.
+		//If the closest vertex is less than (radius) units away, there's a collision.
+		//IMPROVEMENT: Project points onto an axis formed between the circle's centre and this closest point and check for a separation there.
+		float distance = std::numeric_limits<float>::infinity();
+		int nearest = -1;
+
+		for (int l = 0; l < aVerts.size(); l++)
+		{
+			//I worry that this section is prone to errors. Will test this tomorrow.
+			//This seems to be backwards. It's not marking the right vertex as the closest one at all.
+			float tempdist = sqrt(((b.GetPosition().x - (a.GetPosition().x + aVerts[l].x)) * (b.GetPosition().x - (a.GetPosition().x + aVerts[l].x)))
+				+ ((b.GetPosition().y - (a.GetPosition().y + aVerts[l].y)) * (b.GetPosition().y - (a.GetPosition().y + aVerts[l].y))));
+
+			if (tempdist < distance)
+			{//If this vertex is closer than the last one, mark this one as the closest.
+				distance = tempdist;
+				nearest = l; //Probably not necessary, but keeping a note of this in case.
+			}
+		}
+		cout << nearest << endl;
+
+
+
+		if (distance <= b.GetRadius())
+		{//Check the distance. If they're close enough, we've checked every axis by now, so there's definitely a collision.
+			return true;
+		}
+		//Otherwise, they're far enough away that there's a gap here too. No collision detected.
 		return false;
 	}
 
