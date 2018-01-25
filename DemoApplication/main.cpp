@@ -1,7 +1,7 @@
 using namespace std;
 #include <iostream>
 #include <SDL.h>
-#include "CDComponent.h"
+#include "CD_Component.h"
 
 int appstate = 0;
 enum AppState {
@@ -133,14 +133,14 @@ void showConsole()
 
 		cout << "P1 Position: (" << p1.GetPosition().x << ", " << p1.GetPosition().y << ");" << endl
 			<< "P1 Vertices: {" << endl;
-		for (int i = 0; i < p1.GetVertices().size(); i++)
+		for (unsigned int i = 0; i < p1.GetVertices().size(); i++)
 		{
 			cout << "(" << p1.GetVertices()[i].x + p1.GetPosition().x << ", " << p1.GetVertices()[i].y + p1.GetPosition().y << ");" << endl;
 		}
 
 		cout << endl << "P2 Position: (" << p2.GetPosition().x << ", " << p2.GetPosition().y << ");" << endl
 			<< "P2 Vertices: {" << endl;
-		for (int i = 0; i < p2.GetVertices().size(); i++)
+		for (unsigned int i = 0; i < p2.GetVertices().size(); i++)
 		{
 			cout << "(" << p2.GetVertices()[i].x + p2.GetPosition().x << ", " << p2.GetVertices()[i].y + p2.GetPosition().y << ");" << endl;
 		}
